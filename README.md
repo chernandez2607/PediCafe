@@ -45,7 +45,7 @@ Java y Spring Boot para el backend.
 
 Bootstrap para la interfaz.
 
-Base de datos relacional por definir.
+Base de datos relacional.
 
 GitHub para el control de versiones.
 
