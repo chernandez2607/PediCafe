@@ -1,0 +1,11 @@
+target/
+.env
+*.iml
+.idea/
+.vscode/
+
+# Credenciales privadas de Firebase; guárdelas fuera del repositorio.
+firebase-credentials/
+serviceAccountKey.json
+*-firebase-adminsdk-*.json
+src/main/resources/firebase/*.json

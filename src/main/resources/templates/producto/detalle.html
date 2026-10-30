@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.productDetail.title(${producto.nombre})})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('menu')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.catalog}, #{header.productDetail.title}, #{header.productDetail.subtitle})}"></header>
+        <main class="pc-content">
+            <a class="pc-back-link" th:href="@{/menu}"><span aria-hidden="true">←</span> <span th:text="#{product.detail.back}">Volver al menú</span></a>
+            <article class="pc-product-detail">
+                <div class="row g-0">
+                    <div class="col-md-6">
+                        <img class="pc-detail-image" th:if="${!#strings.isEmpty(producto.imagenUrl)}" th:src="${producto.imagenUrl}" th:alt="${producto.nombre}">
+                        <div class="pc-product-image-placeholder h-100" th:if="${#strings.isEmpty(producto.imagenUrl)}" aria-hidden="true">PEDICAFÉ</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="pc-detail-body">
+                            <span class="pc-product-category" th:text="${producto.categoria.nombre}">Categoría</span>
+                            <h2 class="display-6 fw-semibold mb-3" th:text="${producto.nombre}">Producto</h2>
+                            <p class="text-secondary lh-lg" th:text="${producto.descripcion}">Descripción del producto</p>
+                            <div class="d-flex align-items-center justify-content-between gap-3 mt-4 pt-3 border-top">
+                                <strong class="pc-price fs-4" th:text="|₡${#numbers.formatDecimal(producto.precio, 1, 'POINT', 2, 'COMMA')}|">₡0,00</strong>
+                                <a class="btn btn-pc-light" th:href="@{/menu}" th:text="#{product.detail.explore}">Seguir explorando</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </main>
+    </div>
+</div>
+</body>
+</html>

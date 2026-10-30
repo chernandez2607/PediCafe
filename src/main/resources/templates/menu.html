@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.menu.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('menu')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.catalog}, #{header.menu.title}, #{header.menu.subtitle})}"></header>
+        <main class="pc-content">
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+            <div class="pc-content-heading">
+                <div><h2 th:text="#{menu.find}">Encuentra tu favorito</h2><p th:text="#{menu.chooseCategory}">Elige una categoría para explorar el menú.</p></div>
+                <span class="pc-count" th:text="#{menu.productCount(${productos.size()})}">Productos</span>
+            </div>
+
+            <nav class="pc-category-filters" th:attr="aria-label=#{accessibility.filterProductsByCategory}">
+                <a class="pc-filter" th:classappend="${idCategoriaActual == null} ? ' active' : ''" th:href="@{/menu}" th:text="#{menu.all}">Todos</a>
+                <a class="pc-filter" th:each="categoria : ${categorias}"
+                   th:classappend="${idCategoriaActual == categoria.idCategoria} ? ' active' : ''"
+                   th:href="@{/menu/categoria/{id}(id=${categoria.idCategoria})}"
+                   th:text="${categoria.nombre}">Categoría</a>
+            </nav>
+
+            <div class="row g-3 g-xl-4" th:if="${!productos.isEmpty()}">
+                <div class="col-12 col-sm-6 col-xl-4" th:each="producto : ${productos}">
+                    <article class="pc-product-card">
+                        <img class="pc-product-image" th:if="${!#strings.isEmpty(producto.imagenUrl)}"
+                             th:src="${producto.imagenUrl}" th:alt="${producto.nombre}">
+                        <div class="pc-product-image-placeholder" th:if="${#strings.isEmpty(producto.imagenUrl)}" aria-hidden="true">PEDICAFÉ</div>
+                        <div class="pc-product-body">
+                            <span class="pc-product-category" th:text="${producto.categoria.nombre}" th:attr="aria-label=#{menu.categoryFallback}">Categoría</span>
+                            <h2 th:text="${producto.nombre}">Producto</h2>
+                            <p class="pc-product-description" th:text="${producto.descripcion}">Descripción del producto</p>
+                            <div class="pc-product-footer">
+                                <strong class="pc-price" th:text="|₡${#numbers.formatDecimal(producto.precio, 1, 'POINT', 2, 'COMMA')}|">₡0,00</strong>
+                                <a class="btn btn-pc-primary btn-sm" th:href="@{/menu/producto/{id}(id=${producto.idProducto})}" th:text="#{menu.viewDetail}">Ver detalle</a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+            <div class="pc-empty" th:if="${productos.isEmpty()}" th:text="#{menu.empty}">No hay productos activos en esta categoría.</div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

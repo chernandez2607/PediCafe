@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.products.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('productos')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, #{header.products.title}, #{header.products.subtitle})}"></header>
+        <main class="pc-content">
+            <div class="pc-content-heading">
+                <div><h2 th:text="#{product.list.heading}">Listado de productos</h2><p th:text="#{product.list.subtitle}">Consulta y administra los productos del menú.</p></div>
+                <a class="btn btn-pc-accent" th:href="@{/admin/productos/nuevo}" th:text="#{product.create}">＋ Nuevo producto</a>
+            </div>
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+            <div class="pc-table-wrap table-responsive" th:if="${!productos.isEmpty()}">
+                <table class="table table-striped pc-table">
+                    <thead><tr><th th:text="#{product.column.name}">Producto</th><th th:text="#{product.column.category}">Categoría</th><th th:text="#{product.column.price}">Precio</th><th th:text="#{product.column.status}">Estado</th><th class="text-end" th:text="#{product.column.actions}">Acciones</th></tr></thead>
+                    <tbody>
+                    <tr th:each="producto : ${productos}">
+                        <td><div class="d-flex align-items-center gap-3">
+                            <img th:if="${!#strings.isEmpty(producto.imagenUrl)}" th:src="${producto.imagenUrl}" th:alt="${producto.nombre}" width="48" height="42" class="rounded-2 object-fit-cover">
+                            <span class="fw-semibold" th:text="${producto.nombre}">Producto</span>
+                        </div></td>
+                        <td th:text="${producto.categoria.nombre}">Categoría</td>
+                        <td class="fw-semibold" th:text="|₡${#numbers.formatDecimal(producto.precio, 1, 'POINT', 2, 'COMMA')}|">₡0,00</td>
+                        <td><span class="pc-status" th:classappend="${!producto.activo} ? ' inactive' : ''" th:text="${producto.activo ? #messages.msg('product.status.active') : #messages.msg('product.status.inactive')}">Activo</span></td>
+                        <td><div class="pc-row-actions justify-content-end">
+                            <a class="btn btn-pc-light btn-sm" th:href="@{/admin/productos/editar/{id}(id=${producto.idProducto})}" th:text="#{product.action.edit}">Editar</a>
+                            <form th:if="${producto.activo}" method="post" th:action="@{/admin/productos/desactivar/{id}(id=${producto.idProducto})}">
+                                <button class="btn btn-outline-secondary btn-sm" type="submit" th:text="#{product.action.deactivate}">Desactivar</button>
+                            </form>
+                            <button class="btn btn-outline-danger btn-sm" type="button"
+                                    data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                    th:data-bs-id="${producto.idProducto}"
+                                    th:data-bs-descripcion="${producto.nombre}"
+                                    th:text="#{product.action.delete}">Eliminar</button>
+                        </div></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pc-empty" th:if="${productos.isEmpty()}" th:text="#{product.empty}">Todavía no hay productos registrados.</div>
+            <section th:replace="~{fragments/nav :: confirmarEliminar(@{/admin/productos/eliminar}, 'idProducto', #{product.action.delete}, #{product.delete.confirm})}"></section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

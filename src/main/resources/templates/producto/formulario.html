@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.productForm.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('productos')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, producto.idProducto == null ? #{header.productCreate.title} : #{header.productEdit.title}, #{header.productForm.subtitle})}"></header>
+        <main class="pc-content">
+            <a class="pc-back-link" th:href="@{/admin/productos}"><span aria-hidden="true">←</span> <span th:text="#{form.product.back}">Volver a productos</span></a>
+            <div th:replace="~{fragments/nav :: formError}"></div>
+            <form class="pc-form-card" method="post" enctype="multipart/form-data"
+                  th:action="@{/admin/productos/guardar}" th:object="${producto}" id="productoForm">
+                <input type="hidden" th:field="*{idProducto}">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label pc-form-label" for="nombre" th:text="#{form.product.name}">Nombre</label>
+                        <input class="form-control pc-form-control" id="nombre" th:field="*{nombre}" maxlength="100" autocomplete="off" required>
+                        <div class="pc-field-error" th:errors="*{nombre}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label pc-form-label" for="idCategoria" th:text="#{form.product.category}">Categoría</label>
+                        <select class="form-select pc-form-select" id="idCategoria" name="idCategoria" required>
+                            <option value="" th:text="#{form.product.chooseCategory}">Selecciona una categoría</option>
+                            <option th:each="categoria : ${categorias}" th:value="${categoria.idCategoria}"
+                                    th:text="${categoria.nombre}"
+                                    th:selected="${producto.categoria != null and producto.categoria.idCategoria == categoria.idCategoria}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label pc-form-label" for="precio" th:text="#{form.product.price}">Precio</label>
+                        <div class="input-group"><span class="input-group-text">₡</span><input class="form-control pc-form-control" id="precio" type="number" th:field="*{precio}" min="0.01" step="0.01" required></div>
+                        <div class="pc-field-error" th:errors="*{precio}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label pc-form-label" for="imagenUrl" th:text="#{product.image.urlLabel}">URL de imagen</label>
+                        <input class="form-control pc-form-control" id="imagenUrl" type="text" inputmode="url"
+                               name="imagenUrl" th:value="${imagenUrlVista}" maxlength="1024" autocomplete="url"
+                               th:placeholder="#{product.image.urlPlaceholder}">
+                        <div class="pc-field-error" th:errors="*{imagenUrl}"></div>
+                        <div class="form-text" th:text="#{product.image.urlHelp}">Puede pegar una URL o subir una imagen. El archivo seleccionado tiene prioridad.</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label pc-form-label" for="imagenFile" th:text="#{product.image.uploadLabel}">Subir fotografía (JPEG, PNG o WebP; máximo 5 MB)</label>
+                        <input class="form-control pc-form-control" id="imagenFile" name="imagenFile" type="file"
+                               accept="image/jpeg,image/png,image/webp"
+                               th:attr="data-error-size=#{product.image.error.size},data-error-type=#{product.image.error.type}">
+                        <div class="pc-field-error" id="imagenFileError" role="status" aria-live="polite"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="pc-image-preview-wrap" id="imagenPreviewWrap"
+                             th:classappend="${#strings.isEmpty(imagenUrlVista)} ? ' d-none' : ''">
+                            <span class="form-label pc-form-label d-block" th:text="#{product.image.preview}">Vista previa</span>
+                            <img class="pc-image-preview" id="imagenPreview"
+                                 th:src="${imagenUrlVista}" th:alt="${producto.nombre ?: 'Imagen del producto'}">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label pc-form-label" for="descripcion"><span th:text="#{form.product.description}">Descripción</span> <span class="fw-normal text-secondary" th:text="#{form.product.descriptionOptional}">(opcional)</span></label>
+                        <textarea class="form-control pc-form-control" id="descripcion" th:field="*{descripcion}" rows="4"></textarea>
+                    </div>
+                    <div class="col-12 form-check ms-2" th:if="${producto.idProducto != null}">
+                        <input class="form-check-input" type="checkbox" th:field="*{activo}" id="activo">
+                        <label class="form-check-label pc-form-label" for="activo" th:text="#{form.product.active}">Producto activo</label>
+                    </div>
+                </div>
+                <div class="pc-form-actions">
+                    <button class="btn btn-pc-primary" type="submit" th:text="#{form.product.save}">Guardar producto</button>
+                    <a class="btn btn-pc-light" th:href="@{/admin/productos}" th:text="#{form.cancel}">Cancelar</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+<script th:src="@{/js/producto-formulario.js}" defer></script>
+</body>
+</html>

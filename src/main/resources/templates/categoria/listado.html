@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.categories.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('categorias')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, #{header.categories.title}, #{header.categories.subtitle})}"></header>
+        <main class="pc-content">
+            <div class="pc-content-heading">
+                <div><h2 th:text="#{category.list.heading}">Listado de categorías</h2><p th:text="#{category.list.subtitle}">Administra los nombres y el estado de cada categoría.</p></div>
+                <a class="btn btn-pc-accent" th:href="@{/admin/categorias/nueva}" th:text="#{category.create}">＋ Nueva categoría</a>
+            </div>
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+            <div class="pc-table-wrap table-responsive" th:if="${!categorias.isEmpty()}">
+                <table class="table table-striped pc-table">
+                    <thead><tr><th th:text="#{category.column.name}">Categoría</th><th th:text="#{category.column.description}">Descripción</th><th th:text="#{category.column.status}">Estado</th><th class="text-end" th:text="#{category.column.actions}">Acciones</th></tr></thead>
+                    <tbody>
+                    <tr th:each="categoria : ${categorias}">
+                        <td class="fw-semibold" th:text="${categoria.nombre}">Categoría</td>
+                        <td th:text="${categoria.descripcion ?: #messages.msg('category.descriptionEmpty')}">Descripción</td>
+                        <td><span class="pc-status" th:classappend="${!categoria.activo} ? ' inactive' : ''" th:text="${categoria.activo ? #messages.msg('category.status.active') : #messages.msg('category.status.inactive')}">Activa</span></td>
+                        <td><div class="pc-row-actions justify-content-end">
+                            <a class="btn btn-pc-light btn-sm" th:href="@{/admin/categorias/editar/{id}(id=${categoria.idCategoria})}" th:text="#{category.action.edit}">Editar</a>
+                            <form th:if="${categoria.activo}" method="post" th:action="@{/admin/categorias/desactivar/{id}(id=${categoria.idCategoria})}">
+                                <button class="btn btn-outline-secondary btn-sm" type="submit" th:text="#{category.action.deactivate}">Desactivar</button>
+                            </form>
+                            <button class="btn btn-outline-danger btn-sm" type="button"
+                                    data-bs-toggle="modal" data-bs-target="#confirmModal"
+                                    th:data-bs-id="${categoria.idCategoria}"
+                                    th:data-bs-descripcion="${categoria.nombre}"
+                                    th:text="#{category.action.delete}">Eliminar</button>
+                        </div></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pc-empty" th:if="${categorias.isEmpty()}" th:text="#{category.empty}">Todavía no hay categorías registradas.</div>
+            <section th:replace="~{fragments/nav :: confirmarEliminar(@{/admin/categorias/eliminar}, 'idCategoria', #{category.action.delete}, #{category.delete.confirm})}"></section>
+        </main>
+    </div>
+</div>
+</body>
+</html>

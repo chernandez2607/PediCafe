@@ -1,0 +1,72 @@
+<head th:fragment="head(pageTitle)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle}">PediCafé</title>
+    <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/pedicafe.css}" rel="stylesheet">
+    <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/rutinas.js}" defer></script>
+</head>
+
+<aside th:fragment="sidebar(active)" class="pc-sidebar">
+    <a class="pc-brand" th:href="@{/menu}">
+        <span class="pc-brand-name" th:text="#{app.name}">PediCafé</span>
+        <span class="pc-brand-caption" th:text="#{brand.caption}">Gestión de cafetería</span>
+    </a>
+    <nav class="pc-sidebar-nav" aria-label="Navegación principal">
+        <a class="pc-nav-link" th:classappend="${active == 'inicio'} ? ' active' : ''" th:href="@{/menu}">
+            <span class="pc-nav-mark">⌂</span><span th:text="#{nav.home}">Inicio</span>
+        </a>
+        <a class="pc-nav-link" th:classappend="${active == 'menu'} ? ' active' : ''" th:href="@{/menu}">
+            <span class="pc-nav-mark">☕</span><span th:text="#{nav.menu}">Menú</span>
+        </a>
+        <a class="pc-nav-link" th:classappend="${active == 'productos'} ? ' active' : ''" th:href="@{/admin/productos}">
+            <span class="pc-nav-mark">▦</span><span th:text="#{nav.products}">Productos</span>
+        </a>
+        <a class="pc-nav-link" th:classappend="${active == 'categorias'} ? ' active' : ''" th:href="@{/admin/categorias}">
+            <span class="pc-nav-mark">◫</span><span th:text="#{nav.categories}">Categorías</span>
+        </a>
+    </nav>
+</aside>
+
+<header th:fragment="pageHeader(eyebrow, title, subtitle)" class="pc-page-header">
+    <div>
+        <p class="pc-eyebrow" th:text="${eyebrow}">PediCafé</p>
+        <h1 th:text="${title}">Título</h1>
+        <p class="pc-page-subtitle" th:if="${subtitle != null and !#strings.isEmpty(subtitle)}" th:text="${subtitle}">Descripción</p>
+    </div>
+    <a class="pc-header-home" th:href="@{/menu}" th:attr="aria-label=#{accessibility.goToMenu}">P</a>
+</header>
+
+<th:block th:fragment="flashMessages">
+    <div class="alert alert-success pc-alert" th:if="${mensaje}" th:text="${mensaje}"></div>
+    <div class="alert alert-danger pc-alert" th:if="${error}" th:text="${error}"></div>
+</th:block>
+
+<div th:fragment="formError" class="alert alert-danger pc-alert" th:if="${error}" th:text="${error}"></div>
+
+<section th:fragment="confirmarEliminar(accionEliminar, nombreId, tituloConfirmacion, mensajeConfirmacion)">
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form th:action="${accionEliminar}" method="post">
+                    <input type="hidden" th:attr="name=${nombreId}" id="modalId">
+                    <div class="modal-header bg-warning text-white">
+                        <h5 class="modal-title" id="modalLabel" th:text="${tituloConfirmacion}">Eliminar</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                th:attr="aria-label=#{accessibility.close}"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p th:text="${mensajeConfirmacion}">Confirme la eliminación.</p>
+                        <p class="fw-semibold mb-0" id="modalDescripcion"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-outline-danger" th:text="${tituloConfirmacion}">Eliminar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                th:text="#{form.cancel}">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

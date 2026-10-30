@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.categoryForm.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('categorias')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, categoria.idCategoria == null ? #{header.categoryCreate.title} : #{header.categoryEdit.title}, #{header.categoryForm.subtitle})}"></header>
+        <main class="pc-content">
+            <a class="pc-back-link" th:href="@{/admin/categorias}"><span aria-hidden="true">←</span> <span th:text="#{form.category.back}">Volver a categorías</span></a>
+            <div th:replace="~{fragments/nav :: formError}"></div>
+            <form class="pc-form-card" method="post" th:action="@{/admin/categorias/guardar}" th:object="${categoria}">
+                <input type="hidden" th:field="*{idCategoria}">
+                <div class="mb-3">
+                    <label class="form-label pc-form-label" for="nombre" th:text="#{category.form.name}">Nombre de categoría</label>
+                    <input class="form-control pc-form-control" id="nombre" th:field="*{nombre}" maxlength="80" autocomplete="off" required>
+                    <div class="pc-field-error" th:errors="*{nombre}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label pc-form-label" for="descripcion"><span th:text="#{category.form.description}">Descripción</span> <span class="fw-normal text-secondary" th:text="#{form.product.descriptionOptional}">(opcional)</span></label>
+                    <textarea class="form-control pc-form-control" id="descripcion" th:field="*{descripcion}" maxlength="255" rows="4"></textarea>
+                </div>
+                <div class="form-check" th:if="${categoria.idCategoria != null}">
+                    <input class="form-check-input" type="checkbox" th:field="*{activo}" id="activo">
+                    <label class="form-check-label pc-form-label" for="activo" th:text="#{category.form.active}">Categoría activa</label>
+                </div>
+                <div class="pc-form-actions">
+                    <button class="btn btn-pc-primary" type="submit" th:text="#{form.category.save}">Guardar categoría</button>
+                    <a class="btn btn-pc-light" th:href="@{/admin/categorias}" th:text="#{form.cancel}">Cancelar</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>
