@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="es"
+      th:lang="${#locale.language}"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/nav :: head(#{page.cart.title})}">
+</head>
+
+<body>
+<div class="pc-app">
+
+    <aside th:replace="~{fragments/nav :: sidebar('carrito')}">
+    </aside>
+
+    <div class="pc-main">
+
+        <header th:replace="~{fragments/nav :: pageHeader(
+                    #{header.customer},
+                    #{header.cart.title},
+                    #{header.cart.subtitle})}">
+        </header>
+
+        <main class="pc-content">
+
+            <th:block th:replace="~{fragments/nav :: flashMessages}">
+            </th:block>
+
+            <div class="pc-empty" th:if="${items.isEmpty()}">
+                <p th:text="#{cart.empty}">Tu carrito está vacío.</p>
+
+                <a class="btn btn-pc-primary"
+                   th:href="@{/menu}"
+                   th:text="#{cart.continue}">
+                    Seguir comprando
+                </a>
+            </div>
+
+            <div th:if="${!items.isEmpty()}">
+
+                <p class="text-secondary small"
+                   th:text="#{cart.pricesExcludingTax}">
+                    Los precios no incluyen IVA.
+                </p>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="table-responsive">
+
+                        <table class="table align-middle mb-0">
+
+                            <thead>
+                            <tr>
+                                <th th:text="#{cart.product}">Producto</th>
+                                <th th:text="#{cart.quantity}">Cantidad</th>
+                                <th th:text="#{cart.unitPrice}">Precio</th>
+                                <th th:text="#{cart.lineSubtotal}">Subtotal</th>
+                                <th th:text="#{cart.actions}">Acciones</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <tr th:each="item : ${items}">
+
+                                <td>
+                                    <strong th:text="${item.nombre}">
+                                        Producto
+                                    </strong>
+
+                                    <small class="d-block text-danger"
+                                           th:if="${!item.disponible}"
+                                           th:text="#{cart.unavailable}">
+                                        Producto no disponible
+                                    </small>
+                                </td>
+
+                                <td>
+                                    <form th:action="@{/carrito/actualizar}"
+                                          method="post"
+                                          class="d-flex gap-2">
+
+                                        <input type="hidden"
+                                               name="idProducto"
+                                               th:value="${item.idProducto}">
+
+                                        <label class="visually-hidden"
+                                               th:for="|cantidad-${item.idProducto}|"
+                                               th:text="#{cart.quantity}">
+                                            Cantidad
+                                        </label>
+
+                                        <input type="number"
+                                               name="cantidad"
+                                               th:id="|cantidad-${item.idProducto}|"
+                                               th:value="${item.cantidad}"
+                                               min="1"
+                                               max="20"
+                                               step="1"
+                                               required
+                                               class="form-control form-control-sm"
+                                               style="width: 75px"
+                                               th:disabled="${!item.disponible}">
+
+                                        <button type="submit"
+                                                class="btn btn-pc-light btn-sm"
+                                                th:disabled="${!item.disponible}"
+                                                th:text="#{cart.update}">
+                                            Actualizar
+                                        </button>
+                                    </form>
+                                </td>
+
+                                <td th:text="|₡${#numbers.formatDecimal(
+                                        item.precioUnitario,
+                                        1, 'POINT', 2, 'COMMA')}|">
+                                    ₡0,00
+                                </td>
+
+                                <td class="fw-semibold"
+                                    th:text="|₡${#numbers.formatDecimal(
+                                        item.subtotal,
+                                        1, 'POINT', 2, 'COMMA')}|">
+                                    ₡0,00
+                                </td>
+
+                                <td>
+                                    <form th:action="@{/carrito/eliminar}"
+                                          method="post">
+
+                                        <input type="hidden"
+                                               name="idProducto"
+                                               th:value="${item.idProducto}">
+
+                                        <button type="submit"
+                                                class="btn btn-outline-danger btn-sm"
+                                                th:text="#{cart.remove}">
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+
+                            </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between
+                            flex-wrap gap-2 my-4">
+
+                    <a class="btn btn-pc-light"
+                       th:href="@{/menu}"
+                       th:text="#{cart.continue}">
+                        Seguir comprando
+                    </a>
+
+                    <form th:action="@{/carrito/vaciar}" method="post">
+                        <button type="submit"
+                                class="btn btn-outline-danger"
+                                th:text="#{cart.clear}">
+                            Vaciar carrito
+                        </button>
+                    </form>
+
+                </div>
+
+                <div class="alert alert-danger"
+                     th:if="${errorImpuesto != null}"
+                     th:text="${errorImpuesto}">
+                </div>
+
+                <section class="card border-0 shadow-sm p-4 ms-auto"
+                         style="max-width: 420px"
+                         th:if="${resumen != null}">
+
+                    <h2 class="h5 mb-3" th:text="#{cart.summary}">
+                        Resumen del pedido
+                    </h2>
+
+                    <p class="text-secondary small"
+                       th:text="#{cart.units(${resumen.cantidadTotal})}">
+                        Artículos
+                    </p>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span th:text="#{cart.subtotal}">Subtotal</span>
+
+                        <span th:text="|₡${#numbers.formatDecimal(
+                                resumen.subtotal,
+                                1, 'POINT', 2, 'COMMA')}|">
+                            ₡0,00
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span th:text="#{cart.tax(
+                                ${resumen.impuestoPorcentaje})}">
+                            IVA
+                        </span>
+
+                        <span th:text="|₡${#numbers.formatDecimal(
+                                resumen.impuestoMonto,
+                                1, 'POINT', 2, 'COMMA')}|">
+                            ₡0,00
+                        </span>
+                    </div>
+
+                    <div class="d-flex justify-content-between
+                                border-top pt-3 fw-bold">
+
+                        <span th:text="#{cart.total}">Total</span>
+
+                        <span th:text="|₡${#numbers.formatDecimal(
+                                resumen.total,
+                                1, 'POINT', 2, 'COMMA')}|">
+                            ₡0,00
+                        </span>
+                    </div>
+
+                    <p class="text-danger small mt-3 mb-0"
+                       th:if="${!resumen.confirmable}"
+                       th:text="#{cart.unavailableWarning}">
+                        Eliminá los productos no disponibles.
+                    </p>
+
+                </section>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
