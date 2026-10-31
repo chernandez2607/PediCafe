@@ -20,6 +20,14 @@
         <a class="pc-nav-link" th:classappend="${active == 'menu'} ? ' active' : ''" th:href="@{/menu}">
             <span class="pc-nav-mark">☕</span><span th:text="#{nav.menu}">Menú</span>
         </a>
+        <a class="pc-nav-link"
+            th:classappend="${active == 'carrito'} ? ' active' : ''"
+            th:href="@{/carrito}">
+             <span class="pc-nav-mark" aria-hidden="true">🛒</span>
+             <span th:text="#{nav.cart}">Carrito</span>
+             <span class="badge rounded-pill bg-light text-dark ms-auto"
+                   th:text="${cantidadCarrito}">0</span>
+         </a>
         <a class="pc-nav-link" th:classappend="${active == 'productos'} ? ' active' : ''" th:href="@{/admin/productos}">
             <span class="pc-nav-mark">▦</span><span th:text="#{nav.products}">Productos</span>
         </a>

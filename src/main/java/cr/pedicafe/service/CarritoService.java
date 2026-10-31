@@ -158,4 +158,13 @@ public class CarritoService {
                     "cart.quantity.range");
         }
     }
+    public synchronized Map<Integer, Integer> getCantidades() {
+    Map<Integer, Integer> cantidades = new LinkedHashMap<>();
+
+    for (ItemCarrito item : items.values()) {
+        cantidades.put(item.getIdProducto(), item.getCantidad());
+    }
+
+    return cantidades;
+    }
 }

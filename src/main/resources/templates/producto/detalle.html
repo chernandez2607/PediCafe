@@ -19,6 +19,36 @@
                             <span class="pc-product-category" th:text="${producto.categoria.nombre}">Categoría</span>
                             <h2 class="display-6 fw-semibold mb-3" th:text="${producto.nombre}">Producto</h2>
                             <p class="text-secondary lh-lg" th:text="${producto.descripcion}">Descripción del producto</p>
+                            <form th:action="@{/carrito/agregar}" method="post" class="mt-4">
+                                    <input type="hidden"
+                                           name="idProducto"
+                                           th:value="${producto.idProducto}">
+
+                                    <label for="cantidad"
+                                           class="form-label"
+                                           th:text="#{cart.quantity}">
+                                        Cantidad
+                                    </label>
+
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="number"
+                                               id="cantidad"
+                                               name="cantidad"
+                                               value="1"
+                                               min="1"
+                                               max="20"
+                                               step="1"
+                                               required
+                                               class="form-control"
+                                               style="width:90px">
+
+                                        <button type="submit"
+                                                class="btn btn-pc-primary"
+                                                th:text="#{cart.add}">
+                                            Agregar al carrito
+                                        </button>
+                                    </div>
+                                </form>
                             <div class="d-flex align-items-center justify-content-between gap-3 mt-4 pt-3 border-top">
                                 <strong class="pc-price fs-4" th:text="|₡${#numbers.formatDecimal(producto.precio, 1, 'POINT', 2, 'COMMA')}|">₡0,00</strong>
                                 <a class="btn btn-pc-light" th:href="@{/menu}" th:text="#{product.detail.explore}">Seguir explorando</a>
