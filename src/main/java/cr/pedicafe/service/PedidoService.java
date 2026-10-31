@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
@@ -239,7 +240,23 @@ public class PedidoService {
         return detallePedidoRepository
                 .findByPedidoIdPedidoOrderByIdDetallePedidoAsc(idPedido);
     }
+    @Transactional(readOnly = true)
+    public Integer getIdClienteAutenticado(Principal principal) {
 
+        if (principal == null) {
+            return null;
+        }
+
+        String correo = principal.getName();
+
+        if (correo == null || correo.isBlank()) {
+            return null;
+        }
+
+        return pedidoRepository
+                .findIdClienteActivoPorCorreo(correo)
+                .orElse(null);
+    }
     private void validarUsuario(Integer idUsuario) {
         if (idUsuario == null || idUsuario < 1) {
             throw new IllegalStateException("order.login.required");

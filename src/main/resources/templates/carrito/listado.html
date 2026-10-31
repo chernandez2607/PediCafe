@@ -216,6 +216,12 @@
                             ₡0,00
                         </span>
                     </div>
+                    <a th:if="${resumen != null and resumen.confirmable}"
+                        th:href="@{/pedidos/confirmar}"
+                        class="btn btn-pc-primary w-100 mt-3"
+                        th:text="#{cart.checkout}">
+                         Continuar con el pedido
+                     </a>
 
                     <p class="text-danger small mt-3 mb-0"
                        th:if="${!resumen.confirmable}"

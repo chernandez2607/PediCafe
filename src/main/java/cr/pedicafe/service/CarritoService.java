@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.annotation.SessionScope;
+import cr.pedicafe.domain.FormularioPedido;
+import cr.pedicafe.domain.Pedido;
 
 @Service
 @SessionScope
@@ -21,7 +23,7 @@ public class CarritoService {
 
     private final ProductoRepository productoRepository;
     private final FirebaseStorageService firebaseStorageService;
-
+    private final PedidoService pedidoService;
     private final Map<Integer, ItemCarrito> items =
             new LinkedHashMap<>();
 
@@ -166,5 +168,27 @@ public class CarritoService {
     }
 
     return cantidades;
+    }
+    public synchronized Pedido confirmarPedido(
+        Integer idUsuario,
+        FormularioPedido formulario) {
+
+    Map<Integer, Integer> cantidades = new LinkedHashMap<>();
+
+    for (ItemCarrito item : items.values()) {
+        cantidades.put(
+                item.getIdProducto(),
+                item.getCantidad());
+    }
+
+    Pedido pedido = pedidoService.crearPedido(
+            idUsuario,
+            cantidades,
+            formulario);
+
+    // Vacía el carrito después de guardar correctamente.
+    items.clear();
+
+    return pedido;
     }
 }

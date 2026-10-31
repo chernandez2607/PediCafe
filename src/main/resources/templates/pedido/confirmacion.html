@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/nav :: head(#{order.confirm.title})}"></head>
+
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('carrito')}"></aside>
+
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.customer}, #{order.confirm.title}, #{order.confirm.subtitle})}"></header>
+
+        <main class="pc-content">
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+
+            <div class="row g-4">
+                <section class="col-lg-7">
+                    <div class="card border-0 shadow-sm p-4">
+                        <h2 class="h5 mb-3"
+                            th:text="#{order.products}">
+                            Productos del pedido
+                        </h2>
+
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                <tr>
+                                    <th th:text="#{cart.product}">Producto</th>
+                                    <th th:text="#{cart.quantity}">Cantidad</th>
+                                    <th class="text-end"
+                                        th:text="#{cart.lineSubtotal}">
+                                        Subtotal
+                                    </th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr th:each="item : ${items}">
+                                    <td th:text="${item.nombre}">Producto</td>
+                                    <td th:text="${item.cantidad}">1</td>
+                                    <td class="text-end"
+                                        th:text="|₡${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}|">
+                                        ₡0,00
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span th:text="#{cart.subtotal}">Subtotal</span>
+                            <span th:text="|₡${#numbers.formatDecimal(resumen.subtotal, 1, 'POINT', 2, 'COMMA')}|">
+                                ₡0,00
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-3">
+                            <span th:text="#{cart.tax(${resumen.impuestoPorcentaje})}">
+                                IVA
+                            </span>
+                            <span th:text="|₡${#numbers.formatDecimal(resumen.impuestoMonto, 1, 'POINT', 2, 'COMMA')}|">
+                                ₡0,00
+                            </span>
+                        </div>
+
+                        <div class="d-flex justify-content-between border-top pt-3 fw-bold">
+                            <span th:text="#{cart.total}">Total</span>
+                            <span th:text="|₡${#numbers.formatDecimal(resumen.total, 1, 'POINT', 2, 'COMMA')}|">
+                                ₡0,00
+                            </span>
+                        </div>
+
+                        <p class="small text-secondary mt-3 mb-0"
+                           th:text="#{order.prices.review}">
+                            Los precios se verifican nuevamente al confirmar.
+                        </p>
+                    </div>
+                </section>
+
+                <section class="col-lg-5">
+                    <div class="card border-0 shadow-sm p-4">
+                        <h2 class="h5 mb-3"
+                            th:text="#{order.pickup.title}">
+                            Retiro del pedido
+                        </h2>
+
+                        <p class="small text-secondary"
+                           th:text="#{order.pickup.help}">
+                            Elegí un horario con al menos 15 minutos de anticipación.
+                        </p>
+
+                        <div class="alert alert-warning"
+                             th:if="${#lists.isEmpty(horariosRetiro)}"
+                             th:text="#{order.pickup.none}">
+                            No hay horarios disponibles.
+                        </div>
+
+                        <form th:action="@{/pedidos/confirmar}"
+                              th:object="${formularioPedido}"
+                              method="post">
+                        <input type="hidden"
+                            name="tokenPedido"
+                            th:value="${tokenPedido}">
+                            <label for="fechaRetiro"
+                                   class="form-label"
+                                   th:text="#{order.pickup.label}">
+                                Fecha y hora de retiro
+                            </label>
+
+                            <select id="fechaRetiro"
+                                    class="form-select"
+                                    th:field="*{fechaRetiro}"
+                                    required>
+                                <option value=""
+                                        th:text="#{order.pickup.choose}">
+                                    Seleccioná un horario
+                                </option>
+
+                                <option th:each="horario : ${horariosRetiro}"
+                                        th:value="${horario.toString()}"
+                                        th:text="${#temporals.format(horario, 'dd/MM/yyyy HH:mm')}">
+                                    Horario
+                                </option>
+                            </select>
+
+                            <div class="text-danger small mt-1"
+                                 th:if="${#fields.hasErrors('fechaRetiro')}"
+                                 th:errors="*{fechaRetiro}">
+                            </div>
+
+                            <label for="notas"
+                                   class="form-label mt-3"
+                                   th:text="#{order.notes}">
+                                Notas opcionales
+                            </label>
+
+                            <textarea id="notas"
+                                      class="form-control"
+                                      rows="3"
+                                      maxlength="500"
+                                      th:field="*{notas}"></textarea>
+
+                            <div class="text-danger small mt-1"
+                                 th:if="${#fields.hasErrors('notas')}"
+                                 th:errors="*{notas}">
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-pc-primary w-100 mt-4"
+                                    th:disabled="${!resumen.confirmable or #lists.isEmpty(horariosRetiro)}"
+                                    th:text="#{order.confirm.button}">
+                                Confirmar pedido
+                            </button>
+                        </form>
+                    </div>
+                </section>
+            </div>
+
+            <a class="btn btn-pc-light mt-4"
+               th:href="@{/carrito}"
+               th:text="#{order.back.cart}">
+                Volver al carrito
+            </a>
+        </main>
+    </div>
+</div>
+</body>
+</html>

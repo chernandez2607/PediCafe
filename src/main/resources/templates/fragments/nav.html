@@ -13,6 +13,12 @@
         <span class="pc-brand-name" th:text="#{app.name}">PediCafé</span>
         <span class="pc-brand-caption" th:text="#{brand.caption}">Gestión de cafetería</span>
     </a>
+    <a class="pc-nav-link"
+    th:classappend="${active == 'pedidos'} ? ' active' : ''"
+    th:href="@{/pedidos/historial}">
+     <span class="pc-nav-mark" aria-hidden="true">▤</span>
+     <span th:text="#{order.history.title}">Mis pedidos</span>
+ </a>
     <nav class="pc-sidebar-nav" aria-label="Navegación principal">
         <a class="pc-nav-link" th:classappend="${active == 'inicio'} ? ' active' : ''" th:href="@{/menu}">
             <span class="pc-nav-mark">⌂</span><span th:text="#{nav.home}">Inicio</span>

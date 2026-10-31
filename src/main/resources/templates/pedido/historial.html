@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/nav :: head(#{order.history.title})}"></head>
+
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('pedidos')}"></aside>
+
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.customer}, #{order.history.title}, #{order.history.subtitle})}"></header>
+
+        <main class="pc-content">
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+
+            <div class="pc-empty"
+                 th:if="${#lists.isEmpty(pedidos)}">
+                <p th:text="#{order.history.empty}">
+                    Todavía no tenés pedidos registrados.
+                </p>
+
+                <a class="btn btn-pc-primary"
+                   th:href="@{/menu}"
+                   th:text="#{cart.continue}">
+                    Seguir comprando
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm"
+                 th:if="${!#lists.isEmpty(pedidos)}">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                        <tr>
+                            <th th:text="#{order.number}">Pedido</th>
+                            <th th:text="#{order.products}">Productos</th>
+                            <th th:text="#{order.status}">Estado</th>
+                            <th th:text="#{cart.total}">Total</th>
+                            <th th:text="#{cart.actions}">Acciones</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr th:each="pedido : ${pedidos}">
+                            <td>
+                                <strong class="d-block text-break"
+                                        th:text="${pedido.numeroPedido}">
+                                    Pedido
+                                </strong>
+
+                                <small class="text-secondary"
+                                       th:text="${#temporals.format(pedido.fechaPedido, 'dd/MM/yyyy HH:mm')}">
+                                    Fecha
+                                </small>
+                            </td>
+
+                            <td>
+                                <div th:each="detalle : ${detallesPorPedido[pedido.idPedido]}">
+                                    <span th:text="${detalle.cantidad}">1</span>
+                                    ×
+                                    <span th:text="${detalle.nombreProductoSnapshot}">
+                                        Producto
+                                    </span>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${pedido.estadoActual == 'LISTO'} ? 'text-bg-success' : 'text-bg-secondary'"
+                                      th:text="${#messages.msg('order.status.' + pedido.estadoActual)}">
+                                    Estado
+                                </span>
+                            </td>
+
+                            <td class="text-nowrap"
+                                th:text="|₡${#numbers.formatDecimal(pedido.total, 1, 'POINT', 2, 'COMMA')}|">
+                                ₡0,00
+                            </td>
+
+                            <td>
+                                <a class="btn btn-pc-light btn-sm"
+                                   th:href="@{/pedidos/{id}/seguimiento(id=${pedido.idPedido})}"
+                                   th:text="#{order.view}">
+                                    Ver pedido
+                                </a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
