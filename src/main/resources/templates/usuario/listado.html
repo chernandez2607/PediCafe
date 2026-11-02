@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.users.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('usuarios')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, #{header.users.title}, #{header.users.subtitle})}"></header>
+        <main class="pc-content">
+            <div class="pc-content-heading">
+                <div><h2 th:text="#{user.list.heading}">Listado de usuarios</h2><p th:text="#{user.list.subtitle}">Asigna roles y activa o desactiva cuentas.</p></div>
+                <span class="pc-count" th:text="${#lists.size(usuarios)}">0</span>
+            </div>
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+            <div class="pc-table-wrap table-responsive" th:if="${!usuarios.isEmpty()}">
+                <table class="table table-striped pc-table">
+                    <thead>
+                    <tr>
+                        <th th:text="#{form.user.name}">Nombre</th>
+                        <th th:text="#{form.user.email}">Correo</th>
+                        <th th:text="#{form.user.role}">Rol</th>
+                        <th th:text="#{user.column.status}">Estado</th>
+                        <th th:text="#{user.profile.since}">Registro</th>
+                        <th class="text-end" th:text="#{category.column.actions}">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="u : ${usuarios}">
+                        <td class="fw-semibold" th:text="${u.nombre}">Nombre</td>
+                        <td th:text="${u.correo}">correo</td>
+                        <td><span class="pc-role-badge" th:text="${u.rol.nombre}">CLIENTE</span></td>
+                        <td><span class="pc-status" th:classappend="${!u.activo} ? ' inactive' : ''"
+                                  th:text="${u.activo ? #messages.msg('user.status.active') : #messages.msg('user.status.inactive')}">Activo</span></td>
+                        <td th:text="${u.fechaCreacion != null} ? ${#temporals.format(u.fechaCreacion, 'dd/MM/yyyy')} : '-'">01/01/2026</td>
+                        <td><div class="pc-row-actions justify-content-end">
+                            <a class="btn btn-pc-light btn-sm" th:href="@{/admin/usuarios/editar/{id}(id=${u.idUsuario})}" th:text="#{user.action.edit}">Editar</a>
+                        </div></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pc-empty" th:if="${usuarios.isEmpty()}" th:text="#{user.empty}">Todavía no hay usuarios registrados.</div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

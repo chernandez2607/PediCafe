@@ -4,6 +4,7 @@
     <title th:text="${pageTitle}">PediCafé</title>
     <link th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/css/pedicafe.css}" rel="stylesheet">
+    <link th:href="@{/css/usuarios.css}" rel="stylesheet">
     <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
     <script th:src="@{/js/rutinas.js}" defer></script>
 </head>
@@ -13,33 +14,77 @@
         <span class="pc-brand-name" th:text="#{app.name}">PediCafé</span>
         <span class="pc-brand-caption" th:text="#{brand.caption}">Gestión de cafetería</span>
     </a>
-    <a class="pc-nav-link"
-    th:classappend="${active == 'pedidos'} ? ' active' : ''"
-    th:href="@{/pedidos/historial}">
-     <span class="pc-nav-mark" aria-hidden="true">▤</span>
-     <span th:text="#{order.history.title}">Mis pedidos</span>
- </a>
     <nav class="pc-sidebar-nav" aria-label="Navegación principal">
+        <!-- Para todos -->
         <a class="pc-nav-link" th:classappend="${active == 'inicio'} ? ' active' : ''" th:href="@{/menu}">
             <span class="pc-nav-mark">⌂</span><span th:text="#{nav.home}">Inicio</span>
         </a>
         <a class="pc-nav-link" th:classappend="${active == 'menu'} ? ' active' : ''" th:href="@{/menu}">
             <span class="pc-nav-mark">☕</span><span th:text="#{nav.menu}">Menú</span>
         </a>
-        <a class="pc-nav-link"
-            th:classappend="${active == 'carrito'} ? ' active' : ''"
-            th:href="@{/carrito}">
-             <span class="pc-nav-mark" aria-hidden="true">🛒</span>
-             <span th:text="#{nav.cart}">Carrito</span>
-             <span class="badge rounded-pill bg-light text-dark ms-auto"
-                   th:text="${cantidadCarrito}">0</span>
-         </a>
-        <a class="pc-nav-link" th:classappend="${active == 'productos'} ? ' active' : ''" th:href="@{/admin/productos}">
-            <span class="pc-nav-mark">▦</span><span th:text="#{nav.products}">Productos</span>
+        <a class="pc-nav-link" th:classappend="${active == 'carrito'} ? ' active' : ''" th:href="@{/carrito}">
+            <span class="pc-nav-mark" aria-hidden="true">🛒</span>
+            <span th:text="#{nav.cart}">Carrito</span>
+            <span class="badge rounded-pill bg-light text-dark ms-auto" th:text="${cantidadCarrito}">0</span>
         </a>
-        <a class="pc-nav-link" th:classappend="${active == 'categorias'} ? ' active' : ''" th:href="@{/admin/categorias}">
-            <span class="pc-nav-mark">◫</span><span th:text="#{nav.categories}">Categorías</span>
+
+        <!-- Solo clientes -->
+        <a class="pc-nav-link" th:if="${esCliente}" th:classappend="${active == 'pedidos'} ? ' active' : ''" th:href="@{/pedidos/historial}">
+            <span class="pc-nav-mark" aria-hidden="true">▤</span>
+            <span th:text="#{order.history.title}">Mis pedidos</span>
         </a>
+
+        <!-- Personal: administrador, barista y cajero -->
+        <th:block th:if="${esAdmin or esBarista or esCajero}">
+            <p class="pc-nav-section" th:text="#{nav.section.admin}">Administración</p>
+            <a class="pc-nav-link" th:classappend="${active == 'panel'} ? ' active' : ''" th:href="@{/admin}">
+                <span class="pc-nav-mark">◧</span><span th:text="#{nav.panel}">Panel</span>
+            </a>
+            <a class="pc-nav-link" th:if="${esAdmin}" th:classappend="${active == 'productos'} ? ' active' : ''" th:href="@{/admin/productos}">
+                <span class="pc-nav-mark">▦</span><span th:text="#{nav.products}">Productos</span>
+            </a>
+            <a class="pc-nav-link" th:if="${esAdmin}" th:classappend="${active == 'categorias'} ? ' active' : ''" th:href="@{/admin/categorias}">
+                <span class="pc-nav-mark">◫</span><span th:text="#{nav.categories}">Categorías</span>
+            </a>
+            <a class="pc-nav-link" th:if="${esAdmin or esBarista}" th:classappend="${active == 'inventario'} ? ' active' : ''" th:href="@{/admin/inventario}">
+                <span class="pc-nav-mark">▣</span><span th:text="#{nav.inventory}">Inventario</span>
+            </a>
+            <a class="pc-nav-link" th:if="${esAdmin or esBarista}" th:classappend="${active == 'recetas'} ? ' active' : ''" th:href="@{/admin/recetas}">
+                <span class="pc-nav-mark">✎</span><span th:text="#{nav.recipes}">Recetas</span>
+            </a>
+            <a class="pc-nav-link" th:if="${esAdmin or esCajero}" th:classappend="${active == 'reportes'} ? ' active' : ''" th:href="@{/admin/reportes}">
+                <span class="pc-nav-mark">▥</span><span th:text="#{nav.reports}">Reportes</span>
+            </a>
+            <a class="pc-nav-link" th:if="${esAdmin}" th:classappend="${active == 'usuarios'} ? ' active' : ''" th:href="@{/admin/usuarios}">
+                <span class="pc-nav-mark">☺</span><span th:text="#{nav.users}">Usuarios</span>
+            </a>
+            <a class="pc-nav-link" th:if="${esAdmin}" th:classappend="${active == 'roles'} ? ' active' : ''" th:href="@{/admin/roles}">
+                <span class="pc-nav-mark">⚑</span><span th:text="#{nav.roles}">Roles</span>
+            </a>
+        </th:block>
+
+        <!-- Cuenta -->
+        <p class="pc-nav-section" th:text="#{nav.section.account}">Mi cuenta</p>
+        <th:block th:unless="${autenticado}">
+            <a class="pc-nav-link" th:classappend="${active == 'login'} ? ' active' : ''" th:href="@{/login}">
+                <span class="pc-nav-mark">→</span><span th:text="#{nav.login}">Iniciar sesión</span>
+            </a>
+            <a class="pc-nav-link" th:classappend="${active == 'registro'} ? ' active' : ''" th:href="@{/registro}">
+                <span class="pc-nav-mark">＋</span><span th:text="#{nav.register}">Crear cuenta</span>
+            </a>
+        </th:block>
+        <th:block th:if="${autenticado}">
+            <a class="pc-nav-link" th:classappend="${active == 'perfil'} ? ' active' : ''" th:href="@{/perfil}">
+                <span class="pc-nav-mark">◉</span>
+                <span th:text="${nombreUsuario} ?: #{nav.profile}">Mi perfil</span>
+            </a>
+            <!-- El logout debe ser POST-->
+            <form class="m-0" method="post" th:action="@{/logout}">
+                <button class="pc-nav-link pc-nav-button" type="submit">
+                    <span class="pc-nav-mark">⏻</span><span th:text="#{nav.logout}">Cerrar sesión</span>
+                </button>
+            </form>
+        </th:block>
     </nav>
 </aside>
 

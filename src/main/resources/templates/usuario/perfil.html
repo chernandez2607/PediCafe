@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.profile.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('perfil')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.account}, #{header.profile.title}, #{header.profile.subtitle})}"></header>
+        <main class="pc-content">
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <form class="pc-form-card mb-4" method="post" th:action="@{/perfil/guardar}">
+                        <h2 class="h6 mb-3" th:text="#{user.profile.data}">Datos de la cuenta</h2>
+                        <dl class="pc-profile-data">
+                            <dt th:text="#{form.user.email}">Correo</dt>
+                            <dd th:text="${usuario.correo}">correo</dd>
+                            <dt th:text="#{form.user.role}">Rol</dt>
+                            <dd><span class="pc-role-badge" th:text="${usuario.rol.nombre}">CLIENTE</span></dd>
+                            <dt th:text="#{user.profile.since}">Miembro desde</dt>
+                            <dd th:text="${usuario.fechaCreacion != null} ? ${#temporals.format(usuario.fechaCreacion, 'dd/MM/yyyy')} : '-'">01/01/2026</dd>
+                        </dl>
+                        <label class="form-label pc-form-label" for="nombre" th:text="#{form.user.name}">Nombre completo</label>
+                        <input class="form-control pc-form-control" id="nombre" name="nombre" th:value="${usuario.nombre}" maxlength="100" required>
+                        <div class="pc-form-actions">
+                            <button class="btn btn-pc-primary" type="submit" th:text="#{form.user.save}">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-lg-6">
+                    <form class="pc-form-card" method="post" th:action="@{/perfil/contrasena}">
+                        <h2 class="h6 mb-3" th:text="#{user.password.change}">Cambiar contraseña</h2>
+                        <div class="mb-3">
+                            <label class="form-label pc-form-label" for="contrasenaActual" th:text="#{form.user.passwordCurrent}">Contraseña actual</label>
+                            <input class="form-control pc-form-control" type="password" id="contrasenaActual" name="contrasenaActual" autocomplete="current-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label pc-form-label" for="contrasenaNueva" th:text="#{form.user.passwordNew}">Contraseña nueva</label>
+                            <input class="form-control pc-form-control" type="password" id="contrasenaNueva" name="contrasenaNueva" minlength="8" maxlength="72" autocomplete="new-password" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label pc-form-label" for="confirmarContrasena" th:text="#{form.user.passwordConfirm}">Confirmar contraseña</label>
+                            <input class="form-control pc-form-control" type="password" id="confirmarContrasena" name="confirmarContrasena" minlength="8" maxlength="72" autocomplete="new-password" required>
+                        </div>
+                        <div class="pc-form-actions">
+                            <button class="btn btn-pc-primary" type="submit" th:text="#{user.password.change}">Cambiar contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

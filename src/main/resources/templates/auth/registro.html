@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.register.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('registro')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.account}, #{header.register.title}, #{header.register.subtitle})}"></header>
+        <main class="pc-content">
+            <div th:replace="~{fragments/nav :: formError}"></div>
+            <form class="pc-form-card" method="post" th:action="@{/registro}" th:object="${formularioRegistro}">
+                <div class="mb-3">
+                    <label class="form-label pc-form-label" for="nombre" th:text="#{form.user.name}">Nombre completo</label>
+                    <input class="form-control pc-form-control" id="nombre" th:field="*{nombre}" maxlength="100" autocomplete="name" required>
+                    <div class="pc-field-error" th:errors="*{nombre}"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label pc-form-label" for="correo" th:text="#{form.user.email}">Correo</label>
+                    <input class="form-control pc-form-control" type="email" id="correo" th:field="*{correo}" maxlength="150" autocomplete="email" required>
+                    <div class="pc-field-error" th:errors="*{correo}"></div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label pc-form-label" for="contrasena" th:text="#{form.user.password}">Contraseña</label>
+                        <input class="form-control pc-form-control" type="password" id="contrasena" name="contrasena" minlength="8" maxlength="72" autocomplete="new-password" required>
+                        <div class="pc-field-error" th:errors="*{contrasena}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label pc-form-label" for="confirmarContrasena" th:text="#{form.user.passwordConfirm}">Confirmar contraseña</label>
+                        <input class="form-control pc-form-control" type="password" id="confirmarContrasena" name="confirmarContrasena" minlength="8" maxlength="72" autocomplete="new-password" required>
+                        <div class="pc-field-error" th:errors="*{confirmarContrasena}"></div>
+                    </div>
+                </div>
+                <div class="pc-form-actions">
+                    <button class="btn btn-pc-primary" type="submit" th:text="#{auth.register.submit}">Crear cuenta</button>
+                    <a class="btn btn-pc-light" th:href="@{/login}" th:text="#{auth.register.haveAccount}">Ya tengo cuenta</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>

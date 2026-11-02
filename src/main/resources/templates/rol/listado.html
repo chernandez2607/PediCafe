@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.roles.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('roles')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, #{header.roles.title}, #{header.roles.subtitle})}"></header>
+        <main class="pc-content">
+            <div class="pc-table-wrap table-responsive" th:if="${!roles.isEmpty()}">
+                <table class="table table-striped pc-table">
+                    <thead>
+                    <tr>
+                        <th th:text="#{form.user.role}">Rol</th>
+                        <th th:text="#{category.column.description}">Descripción</th>
+                        <th class="text-end" th:text="#{role.column.users}">Usuarios</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${roles}">
+                        <td><span class="pc-role-badge" th:text="${r.nombre}">CLIENTE</span></td>
+                        <td th:text="${r.descripcion} ?: '-'">Descripción</td>
+                        <td class="text-end fw-semibold" th:text="${cantidades.get(r.idRol)}">0</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pc-empty" th:if="${roles.isEmpty()}" th:text="#{role.empty}">No hay roles registrados.</div>
+        </main>
+    </div>
+</div>
+</body>
+</html>
