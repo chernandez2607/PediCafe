@@ -30,8 +30,8 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class PedidoService {
 
-    private static final ZoneId ZONA =
-            ZoneId.of("America/Costa_Rica");
+    private static final ZoneId ZONA
+            = ZoneId.of("America/Costa_Rica");
 
     private final PedidoRepository pedidoRepository;
     private final DetallePedidoRepository detallePedidoRepository;
@@ -108,8 +108,8 @@ public class PedidoService {
             }
         }
 
-        Map<Integer, Integer> copia =
-                new LinkedHashMap<>(cantidades);
+        Map<Integer, Integer> copia
+                = new LinkedHashMap<>(cantidades);
 
         for (Map.Entry<Integer, Integer> entrada : copia.entrySet()) {
             Integer idProducto = entrada.getKey();
@@ -207,6 +207,123 @@ public class PedidoService {
         return guardado;
     }
 
+    @Transactional
+    public Pedido crearPedidoPresencial(
+            Map<Integer, Integer> cantidades,
+            String notas,
+            Integer idUsuarioRegistra) {
+
+        if (idUsuarioRegistra == null || idUsuarioRegistra < 1) {
+            throw new IllegalArgumentException(
+                    "Debe indicar el usuario que registra el pedido");
+        }
+
+        if (cantidades == null || cantidades.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "El pedido debe contener productos");
+        }
+
+        Map<Integer, Integer> copia
+                = new LinkedHashMap<>(cantidades);
+
+        for (Map.Entry<Integer, Integer> entrada : copia.entrySet()) {
+            Integer idProducto = entrada.getKey();
+            Integer cantidad = entrada.getValue();
+
+            if (idProducto == null || idProducto < 1
+                    || cantidad == null || cantidad < 1
+                    || cantidad > 20) {
+
+                throw new IllegalArgumentException(
+                        "Producto o cantidad inválida");
+            }
+        }
+
+        Map<Integer, Producto> productos = new LinkedHashMap<>();
+
+        for (Producto producto
+                : productoRepository.findAllById(copia.keySet())) {
+
+            productos.put(producto.getIdProducto(), producto);
+        }
+
+        List<ItemCarrito> items = new ArrayList<>();
+
+        for (Map.Entry<Integer, Integer> entrada : copia.entrySet()) {
+            Producto producto = productos.get(entrada.getKey());
+
+            if (producto == null || !producto.isActivo()) {
+                throw new IllegalArgumentException(
+                        "Producto no encontrado o inactivo");
+            }
+
+            if (producto.getPrecio() == null
+                    || producto.getPrecio().signum() <= 0) {
+
+                throw new IllegalArgumentException(
+                        "Precio de producto inválido");
+            }
+
+            items.add(new ItemCarrito(producto, entrada.getValue()));
+        }
+
+        if (notas != null) {
+            notas = notas.trim();
+
+            if (notas.length() > 500) {
+                throw new IllegalArgumentException(
+                        "Las notas no pueden superar 500 caracteres");
+            }
+
+            if (notas.isEmpty()) {
+                notas = null;
+            }
+        }
+
+        ResumenCarrito resumen = new ResumenCarrito(
+                items,
+                configuracionSistemaService.getImpuestoPorcentaje());
+
+        Pedido pedido = new Pedido();
+
+        pedido.setNumeroPedido(generarNumeroPedido());
+        pedido.setCodigoRetiro(generarCodigoRetiro());
+        pedido.setTipoPedido("PRESENCIAL");
+        pedido.setIdUsuarioCliente(null);
+        pedido.setIdUsuarioRegistra(idUsuarioRegistra);
+        pedido.setFechaPedido(LocalDateTime.now(ZONA));
+        pedido.setFechaRetiro(LocalDateTime.now(ZONA));
+        pedido.setEstadoActual("RECIBIDO");
+        pedido.setSubtotal(resumen.getSubtotal());
+        pedido.setImpuestoPorcentaje(resumen.getImpuestoPorcentaje());
+        pedido.setImpuestoMonto(resumen.getImpuestoMonto());
+        pedido.setTotal(resumen.getTotal());
+        pedido.setNotas(notas);
+
+        Pedido guardado = pedidoRepository.save(pedido);
+
+        List<DetallePedido> detalles = new ArrayList<>();
+
+        for (ItemCarrito item : items) {
+            DetallePedido detalle = new DetallePedido();
+
+            detalle.setPedido(guardado);
+            detalle.setProducto(productos.get(item.getIdProducto()));
+            detalle.setNombreProductoSnapshot(item.getNombre());
+            detalle.setCantidad(item.getCantidad().shortValue());
+            detalle.setPrecioUnitarioSnapshot(item.getPrecioUnitario());
+            detalle.setSubtotalLinea(
+                    item.getSubtotal().setScale(2, RoundingMode.HALF_UP));
+
+            detalles.add(detalle);
+        }
+
+        detallePedidoRepository.saveAll(detalles);
+        detallePedidoRepository.flush();
+
+        return guardado;
+    }
+
     @Transactional(readOnly = true)
     public List<Pedido> getPedidosCliente(Integer idUsuario) {
         validarUsuario(idUsuario);
@@ -227,8 +344,8 @@ public class PedidoService {
 
         return pedidoRepository
                 .findByIdPedidoAndIdUsuarioCliente(idPedido, idUsuario)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("order.notFound"));
+                .orElseThrow(()
+                        -> new IllegalArgumentException("order.notFound"));
     }
 
     @Transactional(readOnly = true)
@@ -240,6 +357,7 @@ public class PedidoService {
         return detallePedidoRepository
                 .findByPedidoIdPedidoOrderByIdDetallePedidoAsc(idPedido);
     }
+
     @Transactional(readOnly = true)
     public Integer getIdClienteAutenticado(Principal principal) {
 
@@ -257,6 +375,7 @@ public class PedidoService {
                 .findIdClienteActivoPorCorreo(correo)
                 .orElse(null);
     }
+
     private void validarUsuario(Integer idUsuario) {
         if (idUsuario == null || idUsuario < 1) {
             throw new IllegalStateException("order.login.required");

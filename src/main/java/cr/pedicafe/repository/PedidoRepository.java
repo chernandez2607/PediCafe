@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 public interface PedidoRepository
         extends JpaRepository<Pedido, Integer> {
 
+    List<Pedido> findByEstadoActualInOrderByFechaPedidoAsc(List<String> estados);
+
     List<Pedido> findByIdUsuarioClienteOrderByFechaPedidoDesc(
             Integer idUsuarioCliente);
 
@@ -22,6 +24,8 @@ public interface PedidoRepository
     boolean existsByNumeroPedido(String numeroPedido);
 
     boolean existsByCodigoRetiro(String codigoRetiro);
+
+    Optional<Pedido> findByCodigoRetiro(String codigoRetiro);
 
     @Query(value = """
             SELECT u.idUsuario

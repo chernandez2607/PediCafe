@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Validar retiro - PediCafé</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+              rel="stylesheet">
+    </head>
+
+    <body class="bg-light">
+
+        <div class="container mt-5">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2>Validación de retiro</h2>
+
+                <a th:href="@{/barista/cola}" class="btn btn-secondary">
+                    Volver a la cola
+                </a>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-body">
+
+                    <p>Ingrese el código proporcionado por el cliente
+                        para comprobar si su pedido está listo.</p>
+
+                    <form th:action="@{/barista/validar-retiro}"
+                          method="post">
+
+                        <div class="mb-3">
+                            <label for="codigoRetiro" class="form-label">
+                                Código de retiro
+                            </label>
+
+                            <input type="text"
+                                   id="codigoRetiro"
+                                   name="codigoRetiro"
+                                   class="form-control"
+                                   required
+                                   placeholder="Ingrese el código">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Validar código
+                        </button>
+
+                    </form>
+
+                    <div th:if="${mensaje}"
+                         class="alert alert-success mt-4">
+
+                        <p th:text="${mensaje}"></p>
+
+                        <hr>
+
+                        <p>
+                            <strong>Número de pedido:</strong>
+                            <span th:text="${pedido.numeroPedido}"></span>
+                        </p>
+
+                        <p>
+                            <strong>Estado:</strong>
+                            <span th:text="${pedido.estadoActual}"></span>
+                        </p>
+
+                        <p>
+                            <strong>Total:</strong>
+                            ₡<span th:text="${pedido.total}"></span>
+                        </p>
+
+                        <form th:action="@{/barista/entregar}"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="idPedido"
+                                   th:value="${pedido.idPedido}">
+
+                            <div class="mb-3">
+                                <label for="idUsuario" class="form-label">
+                                    ID del usuario que entrega
+                                </label>
+
+                                <input type="number"
+                                       id="idUsuario"
+                                       name="idUsuario"
+                                       class="form-control"
+                                       min="1"
+                                       required>
+                            </div>
+
+                            <button type="submit"
+                                    class="btn btn-success">
+                                Confirmar entrega del pedido
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                    <div th:if="${error}"
+                         class="alert alert-danger mt-4"
+                         th:text="${error}">
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </body>
+</html>
