@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.denied.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.account}, #{header.denied.title}, #{header.denied.subtitle})}"></header>
+        <main class="pc-content">
+            <div class="pc-empty">
+                <p th:text="#{auth.denied.text}">Tu rol no tiene permiso para ver esta página.</p>
+                <a class="btn btn-pc-primary" th:href="@{/menu}" th:text="#{auth.denied.back}">Volver al menú</a>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

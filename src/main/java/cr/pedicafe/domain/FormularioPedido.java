@@ -17,4 +17,6 @@ public class FormularioPedido {
 
     @Size(max = 500, message = "{order.notes.max}")
     private String notas;
+
+    private String metodoPago;
 }

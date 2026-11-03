@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.login.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('login')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.account}, #{header.login.title}, #{header.login.subtitle})}"></header>
+        <main class="pc-content">
+            <th:block th:replace="~{fragments/nav :: flashMessages}"></th:block>
+            <div class="alert alert-danger pc-alert" th:if="${param.error}" th:text="#{auth.login.error}"></div>
+            <div class="alert alert-success pc-alert" th:if="${param.salir}" th:text="#{auth.logout.success}"></div>
+
+            <form class="pc-form-card" method="post" th:action="@{/login}">
+                <div class="mb-3">
+                    <label class="form-label pc-form-label" for="correo" th:text="#{form.user.email}">Correo</label>
+                    <input class="form-control pc-form-control" type="email" id="correo" name="correo" maxlength="150" autocomplete="username" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label pc-form-label" for="contrasena" th:text="#{form.user.password}">Contraseña</label>
+                    <input class="form-control pc-form-control" type="password" id="contrasena" name="contrasena" maxlength="72" autocomplete="current-password" required>
+                </div>
+                <div class="pc-form-actions">
+                    <button class="btn btn-pc-primary" type="submit" th:text="#{auth.login.submit}">Iniciar sesión</button>
+                </div>
+                <p class="pc-auth-links">
+                    <span th:text="#{auth.login.noAccount}">¿No tenés cuenta?</span>
+                    <a th:href="@{/registro}" th:text="#{nav.register}">Crear cuenta</a>
+                </p>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>

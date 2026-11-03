@@ -37,6 +37,7 @@ public class PedidoService {
     private final DetallePedidoRepository detallePedidoRepository;
     private final ProductoRepository productoRepository;
     private final ConfiguracionSistemaService configuracionSistemaService;
+    private final PagoService pagoService;
 
     @Value("${pedicafe.retiro.apertura:08:00}")
     private String apertura;
@@ -203,6 +204,13 @@ public class PedidoService {
 
         detallePedidoRepository.saveAll(detalles);
         detallePedidoRepository.flush();
+
+// Registrar el pago asociado al pedido.
+        pagoService.registrarPago(
+                guardado.getIdPedido(),
+                formulario.getMetodoPago(),
+                idUsuario
+        );
 
         return guardado;
     }

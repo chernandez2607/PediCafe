@@ -259,3 +259,7 @@ CREATE TABLE configuracionSistema (
     CONSTRAINT fkConfiguracionUsuario FOREIGN KEY (idUsuarioModifica)
         REFERENCES usuario (idUsuario) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+SELECT id_usuario, nombre, correo, estado
+FROM usuario
+WHERE correo = 'cajero@pedicafe.com';

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.recipes.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('recetas')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, #{header.recipes.title}, #{header.recipes.subtitle})}"></header>
+        <main class="pc-content">
+            <a class="pc-back-link" th:href="@{/admin}"><span aria-hidden="true">←</span> <span th:text="#{panel.back}">Volver al panel</span></a>
+            <!-- Vista navegable lo demas se completan en el avance 3 -->
+            <div class="pc-empty">
+                <p class="fw-semibold" th:text="#{recipes.pending.title}">Recetas</p>
+                <p th:text="#{recipes.pending.text}">Disponible en el Avance 3.</p>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

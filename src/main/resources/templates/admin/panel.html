@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.panel.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('panel')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, #{header.panel.title}, #{header.panel.subtitle})}"></header>
+        <main class="pc-content">
+            <div class="pc-content-heading">
+                <div>
+                    <h2><span th:text="#{panel.welcome}">Hola</span>, <span th:text="${nombreUsuario}">usuario</span></h2>
+                    <p><span th:text="#{panel.yourRole}">Tu rol:</span> <span class="pc-role-badge" th:text="${rolUsuario}">ADMINISTRADOR</span></p>
+                </div>
+            </div>
+            <div class="pc-panel-grid">
+                <a class="pc-panel-card" th:if="${esAdmin}" th:href="@{/admin/productos}">
+                    <span class="pc-panel-icon">▦</span><h3 th:text="#{nav.products}">Productos</h3><p th:text="#{panel.products.text}">Catálogo del menú.</p>
+                </a>
+                <a class="pc-panel-card" th:if="${esAdmin}" th:href="@{/admin/categorias}">
+                    <span class="pc-panel-icon">◫</span><h3 th:text="#{nav.categories}">Categorías</h3><p th:text="#{panel.categories.text}">Organización del menú.</p>
+                </a>
+                <a class="pc-panel-card" th:if="${esAdmin or esBarista}" th:href="@{/admin/inventario}">
+                    <span class="pc-panel-icon">▣</span><h3 th:text="#{nav.inventory}">Inventario</h3><p th:text="#{panel.inventory.text}">Insumos y existencias.</p>
+                </a>
+                <a class="pc-panel-card" th:if="${esAdmin or esBarista}" th:href="@{/admin/recetas}">
+                    <span class="pc-panel-icon">✎</span><h3 th:text="#{nav.recipes}">Recetas</h3><p th:text="#{panel.recipes.text}">Insumos por producto.</p>
+                </a>
+                <a class="pc-panel-card" th:if="${esAdmin or esCajero}" th:href="@{/admin/reportes}">
+                    <span class="pc-panel-icon">▥</span><h3 th:text="#{nav.reports}">Reportes</h3><p th:text="#{panel.reports.text}">Ventas del negocio.</p>
+                </a>
+                <a class="pc-panel-card" th:if="${esAdmin}" th:href="@{/admin/usuarios}">
+                    <span class="pc-panel-icon">☺</span><h3 th:text="#{nav.users}">Usuarios</h3><p th:text="#{panel.users.text}">Cuentas y roles.</p>
+                </a>
+                <a class="pc-panel-card" th:if="${esAdmin}" th:href="@{/admin/roles}">
+                    <span class="pc-panel-icon">⚑</span><h3 th:text="#{nav.roles}">Roles</h3><p th:text="#{panel.roles.text}">Permisos del sistema.</p>
+                </a>
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

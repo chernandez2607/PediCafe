@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" th:lang="${#locale.language}" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/nav :: head(#{page.users.title})}"></head>
+<body>
+<div class="pc-app">
+    <aside th:replace="~{fragments/nav :: sidebar('usuarios')}"></aside>
+    <div class="pc-main">
+        <header th:replace="~{fragments/nav :: pageHeader(#{header.admin}, #{header.userEdit.title}, #{header.userEdit.subtitle})}"></header>
+        <main class="pc-content">
+            <a class="pc-back-link" th:href="@{/admin/usuarios}"><span aria-hidden="true">←</span> <span th:text="#{form.user.back}">Volver a usuarios</span></a>
+            <form class="pc-form-card" method="post" th:action="@{/admin/usuarios/guardar}">
+                <input type="hidden" name="idUsuario" th:value="${usuario.idUsuario}">
+                <dl class="pc-profile-data">
+                    <dt th:text="#{form.user.name}">Nombre</dt>
+                    <dd th:text="${usuario.nombre}">Nombre</dd>
+                    <dt th:text="#{form.user.email}">Correo</dt>
+                    <dd th:text="${usuario.correo}">correo</dd>
+                </dl>
+                <div class="mb-3">
+                    <label class="form-label pc-form-label" for="idRol" th:text="#{form.user.role}">Rol</label>
+                    <select class="form-select pc-form-select" id="idRol" name="idRol" required>
+                        <option th:each="r : ${roles}" th:value="${r.idRol}" th:text="${r.nombre}"
+                                th:selected="${r.idRol == usuario.rol.idRol}">CLIENTE</option>
+                    </select>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="activo" name="activo" value="true" th:checked="${usuario.activo}">
+                    <label class="form-check-label pc-form-label" for="activo" th:text="#{form.user.active}">Cuenta activa</label>
+                </div>
+                <div class="pc-form-actions">
+                    <button class="btn btn-pc-primary" type="submit" th:text="#{form.user.save}">Guardar cambios</button>
+                    <a class="btn btn-pc-light" th:href="@{/admin/usuarios}" th:text="#{form.cancel}">Cancelar</a>
+                </div>
+            </form>
+        </main>
+    </div>
+</div>
+</body>
+</html>
